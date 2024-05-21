@@ -36,9 +36,9 @@ app.post("/", async (req, res) => {
 
 
 app.post("/signup", async (req, res) => {
-    const { email, password } = req.body
+    const { name,email, password } = req.body
 
-    const data = {
+    const data = {name,
         email: email,
         password: password
     }
