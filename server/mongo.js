@@ -1,11 +1,12 @@
 const mongoose = require("mongoose")
-mongoose.connect("mongodb://0.0.0.0:27017/react-login-tut")
+const URI = process.env.DATABASE;
+
+mongoose.connect("mongodb+srv://pratyush:Poiu123@pratyush.v7o29hk.mongodb.net/?retryWrites=true&w=majority&appName=Pratyush")
+// mongoose.connect(URI)
     .then(() => {
         console.log("mongodb connected");
     })
-    .catch(() => {
-        console.log('failed');
-    })
+    .catch((err) => console.log(`no connection:${err}`))
 
 
 const newSchema = new mongoose.Schema({
