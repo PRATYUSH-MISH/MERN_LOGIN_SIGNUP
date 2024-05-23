@@ -29,7 +29,8 @@ function Login() {
             } else {
                 window.alert("LOGIN SUCCESSFUL!");
                 // Navigate to the home page after successful login
-                navigate('/home', { state: { id: data.name } }); // Assuming backend sends user name in response
+                navigate('/home', { state: { id: data.name } }); // Assuming backend sends user name in response and show your name to home page
+                
             }
         } catch (error) {
             console.error("Error:", error.message);

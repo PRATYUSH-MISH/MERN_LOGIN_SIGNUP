@@ -30,8 +30,8 @@ router.post("/login", async (req, res) => {
         // Compare password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
         console.log('Password match:', isMatch);
-
-        if (isMatch) {
+        // If passwords don't match, return error
+        if (!isMatch) {
             return res.status(400).json({ error: "Invalid credentials" });
         }
 
@@ -58,8 +58,8 @@ router.post("/signup", async (req, res) => {
         }
 
         // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new collection({ name, email, password: hashedPassword });
+       // const hashedPassword = await bcrypt.hash(password, 12);
+        const user = new collection({ name, email, password });
 
         await user.save();
         return res.status(201).json({ message: "User created successfully" });
