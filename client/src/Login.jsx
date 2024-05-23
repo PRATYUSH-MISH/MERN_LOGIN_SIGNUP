@@ -1,44 +1,41 @@
-import React, { useEffect, useState } from "react"
-import axios from "axios"
+import React, {  useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 
 
 function Login() {
 
-    const history = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate(); // Import and use useNavigate hook
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
-    async function submit(e) {
-        e.preventDefault();
-
+    const submit = async (e) => {
+        e.preventDefault();//form not reload 
         try {
-
-            await axios.post("http://localhost:8000/", {
-                email, password
-            })
-                .then(res => {
-                    if (res.data == "exist") {
-                        history("/home", { state: { id: email } })
-                    }
-                    else if (res.data == "notexist") {
-                        alert("User have not sign up")
-                    }
+            const res = await fetch('http://localhost:8000/login', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email,
+                    password
                 })
-                .catch(e => {
-                    alert("wrong details")
-                    console.log(e);
-                })
+            });
 
+            const data = await res.json();
+
+            if (res.status === 400 || !data) {
+                window.alert("INVALID CREDENTIALS");
+            } else {
+                window.alert("LOGIN SUCCESSFUL!");
+                // Navigate to the home page after successful login
+                navigate('/home', { state: { id: data.name } }); // Assuming backend sends user name in response
+            }
+        } catch (error) {
+            console.error("Error:", error.message);
+            window.alert("An error occurred. Please try again later.");
         }
-        catch (e) {
-            console.log(e);
-
-        }
-
     }
-
 
     return (
         <div className="Auth-form-container">
@@ -51,6 +48,7 @@ function Login() {
                             type="email"
                             className="form-control mt-1"
                             placeholder="Enter email"
+                            autoComplete="name"
                             onChange={(e) => { setEmail(e.target.value) }} />
                     </div>
                     <div className="form-group mt-3">
@@ -59,6 +57,7 @@ function Login() {
                             type="password"
                             className="form-control mt-1"
                             placeholder="Enter password"
+                            autoComplete="current-password"
                             onChange={(e) => { setPassword(e.target.value) }} />
                     </div>
                     <div className="d-grid gap-2 mt-3">

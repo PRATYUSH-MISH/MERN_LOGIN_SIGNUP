@@ -1,68 +1,32 @@
-const express = require("express")
-const collection = require("./mongo")
-const cors = require("cors")
-const app = express()
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cors(
-   
-))
+const express = require("express");
+const app = express();
+const cors=require('cors')
+const dotenv = require("dotenv");
+const router = require('./auth'); // Import the router
+
+dotenv.config({ path: './config.env' });
+require('./conn');
+
+//handling cors policy
+const corsOptions={
+    origin:'http://localhost:5173',
+    methods:"GET,POST,PUT,DELETE,PATCH,HEAD",
+    credentials:true,
+}
+app.use(cors(corsOptions));
+
+
+app.use(express.json());
 
 
 
-app.get("/", cors(), (req, res) => {
 
-})
-
-
-app.post("/", async (req, res) => {
-    const { email, password } = req.body
-
-    try {
-        const check = await collection.findOne({ email: email })
-
-        if (check) {
-            res.json("exist")
-        }
-        else {
-            res.json("notexist")
-        }
-
-    }
-    catch (e) {
-        res.json("fail")
-    }
-
-})
+// Mount the router for specific paths
+app.use(router)
 
 
 
-app.post("/signup", async (req, res) => {
-    const { name,email, password } = req.body
-
-    const data = {name,
-        email: email,
-        password: password
-    }
-
-    try {
-        const check = await collection.findOne({ email: email })
-
-        if (check) {
-            res.json("exist")
-        }
-        else {
-            res.json("notexist")
-            await collection.insertMany([data])
-        }
-
-    }
-    catch (e) {
-        res.json("fail")
-    }
-
-})
 
 app.listen(8000, () => {
-    console.log("port connected");
-})
+    console.log("Server is running on port 8000");
+});

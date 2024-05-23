@@ -1,31 +1,37 @@
 import React, { useState } from "react";
-import { useNavigate,Link } from "react-router-dom";
-import axios from "axios";
+import { Link ,useNavigate} from "react-router-dom";
 
-function Login() {
-    const history = useNavigate();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    async function submit(e) {
+function Signup() {
+    const [user, setUser] = useState({ name: "", email: "", password: "" })
+    const navigate = useNavigate(); // Using useNavigate hook
+
+    const handleInputs = (e) => {
+        setUser({ ...user, [e.target.name]: e.target.value })
+    }
+
+
+
+    const submit = async (e) => {
         e.preventDefault();
-
+        console.log(user);
         try {
-            const res = await axios.post("http://localhost:8000/signup", {
-            name,   
-            email,
-                password
+            const response = await fetch(`http://localhost:8000/signup`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
             });
 
-            if (res.data === "exist") {
-                alert("User already exists");
-            } else if (res.data === "notexist") {
-                history("/home", { state: { id: email } });
+            if (!response.ok) {
+                throw new Error("Failed to sign up");
             }
+
+            // Navigate to the home page after successful signup
+            navigate('/home', { state: { id: user.name } });
         } catch (error) {
-            console.error("An error occurred:", error);
-            alert("Wrong details");
+            console.error("Error:", error.message);
         }
     }
 
@@ -43,26 +49,35 @@ function Login() {
                     <div className="form-group mt-3">
                         <label>Full Name</label>
                         <input
-                            type="email"
+                            type="text" name="name" // Add
                             className="form-control mt-1"
                             placeholder="e.g Jane Doe"
-                            onChange={(e) => { setName(e.target.value) }}  />
+                            autoComplete="name"
+                            value={user.name}
+                            onChange={handleInputs} />
                     </div>
                     <div className="form-group mt-3">
                         <label>Email address</label>
                         <input
-                            type="email"
+                            type="email" name="email"
                             className="form-control mt-1"
                             placeholder="Email Address"
-                            onChange={(e) => { setEmail(e.target.value) }} />
+                            autoComplete="email"
+
+                            value={user.email}
+                            onChange={handleInputs} />
                     </div>
                     <div className="form-group mt-3">
                         <label>Password</label>
                         <input
-                            type="password"
+                            type="password" name="password"
                             className="form-control mt-1"
                             placeholder="Password"
-                            onChange={(e) => { setPassword(e.target.value) }} />
+                            autoComplete="new-password"
+
+                            value={user.password}
+
+                            onChange={handleInputs} />
                     </div>
                     <div className="d-grid gap-2 mt-3">
                         <button type="submit" className="btn btn-primary" onClick={submit}>
@@ -78,25 +93,4 @@ function Login() {
     );
 }
 
-export default Login;
-
-
-
-                            // <div className="login">
-
-                            //     <h1>Signup</h1>
-
-                            //     <form action="POST">
-                            //         <input type="email" onChange={(e) => { setEmail(e.target.value) }} placeholder="Email" />
-                            //         <input type="password" onChange={(e) => { setPassword(e.target.value) }} placeholder="Password" />
-                            //         <input type="submit" onClick={submit} />
-
-                            //     </form>
-
-                            //     <br />
-                            //     <p>OR</p>
-                            //     <br />
-
-                            //     <Link to="/">Login Page</Link>
-
-                            // </div>
+export default Signup; 
